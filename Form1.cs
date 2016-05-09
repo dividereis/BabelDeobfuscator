@@ -170,8 +170,25 @@ namespace BabelDeobfuscator
             }
         }
 
+
         private void FindStringDecrypterMethods(ModuleDefMD module)
         {
+            /*------*/
+            /* CALL */
+            /*------*/
+            /* 
+             * Class2.smethod_0("", 62708);
+             */
+
+            /*-------------*/
+            /* Method Code */
+            /*-------------*/
+            /*
+	            public static string smethod_0(string string_0, int int_0)
+	            {
+		            return string.Intern(Class2.Class3.class3_0.method_0(string_0, int_0));
+	            } 
+             */
             foreach (var type in module.Types)
             {
                 foreach (var method in type.Methods)
@@ -180,27 +197,56 @@ namespace BabelDeobfuscator
                         continue;
                     if (method.Body.HasInstructions)
                     {
-                        var instrs = method.Body.Instructions;
-                        if (instrs.Count > 5)
+                        var param = method.Parameters.Count;
+                        /*
+                         string smethod_0 (
+		                    string string_0,
+		                    int32 int_0
+	                     ) cil managed 
+                         */
+
+                        if (param != 2)
+                            continue;
+                        var returnedparam = method.ReturnType;
+                        //System.String
+                        if (returnedparam.ToString() != "System.String")
+                            continue;
+                        if (method.IsHideBySig && method.IsStatic)
                         {
-                            for (int i = 0; i < instrs.Count - 3; i++)
+                            var instrs = method.Body.Instructions;
+                            //Should be between 4 and 7
+                            if (instrs.Count > 5)
                             {
-                                if (instrs[i].OpCode.Code == Code.Call && instrs[1].OpCode.Code == Code.Ldc_I8 &&
-                                    instrs[2].OpCode.Code == Code.Newobj && instrs[3].OpCode.Code == Code.Call &&
-                                    instrs[4].OpCode.Code == Code.Brfalse_S && instrs[5].OpCode.Code == Code.Newobj &&
-                                    instrs[6].OpCode.Code == Code.Throw)
+                                for (int i = 0; i < instrs.Count; i++)
                                 {
-                                    Methoddecryption = method;
-                                    Typedecryption = type;
-                                    value = Mode.Trial;
-                                    break;
+                                    /*
+                                    IL_0000: ldsfld         class Class2/Class3 Class2/Class3::class3_0
+                                    IL_0005: ldarg.0
+                                    IL_0006: ldarg.1
+                                    IL_0007: callvirt       instance string Class2/Class3::method_0(string, int32)
+                                    IL_000C: call           string[mscorlib] System.String::Intern(string)
+                                    IL_0011: ret
+                                    */
+
+                                    if (instrs[i].Operand != null)
+                                    {
+                                        if (instrs[i].Operand.ToString().ToLower().Contains("intern"))
+                                        {
+                                            Methoddecryption = method;
+                                            Typedecryption = type;
+                                            value = Mode.Trial;
+                                            break;
+                                        }
+                                    }                              
                                 }
                             }
-                        }
+                        }        
                     }
                 }
             }
         }
+
+
         private void DecryptStringsInMethod(ModuleDefMD module, MethodDef Methoddecryption)
         {
             foreach (TypeDef type in module.Types)

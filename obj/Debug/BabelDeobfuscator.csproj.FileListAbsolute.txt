@@ -10,3 +10,11 @@ C:\Users\samjam53\Documents\GitHub\BabelDeobfuscator\BabelDeobfuscator\obj\Debug
 C:\Users\samjam53\Documents\GitHub\BabelDeobfuscator\BabelDeobfuscator\obj\Debug\BabelDeobfuscator.exe
 C:\Users\samjam53\Documents\GitHub\BabelDeobfuscator\BabelDeobfuscator\obj\Debug\BabelDeobfuscator.pdb
 C:\Users\samjam53\Documents\GitHub\BabelDeobfuscator\BabelDeobfuscator\bin\Debug\BabelDeobfuscator.exe.config
+C:\Users\Xenocode\Documents\GitHub\BabelDeobfuscator\bin\Debug\BabelDeobfuscator.exe.config
+C:\Users\Xenocode\Documents\GitHub\BabelDeobfuscator\obj\Debug\BabelDeobfuscator.exe
+C:\Users\Xenocode\Documents\GitHub\BabelDeobfuscator\obj\Debug\BabelDeobfuscator.pdb
+C:\Users\Xenocode\Documents\GitHub\BabelDeobfuscator\bin\Debug\BabelDeobfuscator.exe
+C:\Users\Xenocode\Documents\GitHub\BabelDeobfuscator\bin\Debug\BabelDeobfuscator.pdb
+C:\Users\Xenocode\Documents\GitHub\BabelDeobfuscator\obj\Debug\BabelDeobfuscator.Form1.resources
+C:\Users\Xenocode\Documents\GitHub\BabelDeobfuscator\obj\Debug\BabelDeobfuscator.Properties.Resources.resources
+C:\Users\Xenocode\Documents\GitHub\BabelDeobfuscator\obj\Debug\BabelDeobfuscator.csproj.GenerateResource.Cache
