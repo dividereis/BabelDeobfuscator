@@ -17,3 +17,4 @@ C:\Users\Xenocode\Documents\GitHub\BabelDeobfuscator\bin\Debug\BabelDeobfuscator
 C:\Users\Xenocode\Documents\GitHub\BabelDeobfuscator\bin\Debug\BabelDeobfuscator.pdb
 C:\Users\Xenocode\Documents\GitHub\BabelDeobfuscator\obj\Debug\BabelDeobfuscator.Properties.Resources.resources
 C:\Users\Xenocode\Documents\GitHub\BabelDeobfuscator\obj\Debug\BabelDeobfuscator.csproj.GenerateResource.Cache
+C:\Users\Xenocode\Documents\GitHub\BabelDeobfuscator\obj\Debug\BabelDeobfuscator.csprojResolveAssemblyReference.cache

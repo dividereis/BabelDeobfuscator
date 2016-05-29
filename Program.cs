@@ -23,7 +23,7 @@ namespace BabelDeobfuscator
             Console.WriteLine(@" |    |   \ / __ \| \_\ \  ___/|  |__|    `   \  ___(  <_> ) \_\ \");
             Console.WriteLine(@" |______  /(____  /___  /\___  >____/_______  /\___  >____/|___  /");
             Console.WriteLine(@"        \/      \/    \/     \/             \/     \/          \/ ");
-            Console.WriteLine("                                                 V3.0 - XenocodeRCE");
+            Console.WriteLine("                                                 V3.1 - XenocodeRCE");
             try
             {
                 asm = ModuleDefMD.Load(args[0]);
@@ -55,14 +55,88 @@ namespace BabelDeobfuscator
                     Console.ForegroundColor = ConsoleColor.White;
                 }
 
-                Console.WriteLine("[!]Retrieving the decryption method ...");
+                Console.WriteLine("[!]Retrieving the string decryption method ...");
+                //STRINGS
                 var decmeth = Core.Helper.BabelHelper.FindStringDecrypterMethods(asm);
                 if(decmeth != null)
                 {
                     Console.WriteLine("[!]Decrypting Strings and Replacing Calls ...");
                     DeobedStringNumber = Core.Helper.BabelHelper.DecryptStringsInMethod(asm);
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("[!] " + DeobedStringNumber + " strings has been decrypte! Saving assembly ...");
+                    Console.WriteLine("[!] " + DeobedStringNumber + " strings has been decrypte!");
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("[!]Error : Decryption Method not foud!");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    return;
+                }
+                //INTEGERS32
+                Console.WriteLine("[!]Retrieving the integer32 decryption method ...");
+                decmeth = Core.Helper.BabelHelper.FindInteger32DecrypterMethods(asm);
+                var DeobedIntegers = 0;
+                if (decmeth != null)
+                {
+                    Console.WriteLine("[!]Decrypting Integers32 and Replacing Calls ...");
+                    DeobedIntegers = Core.Helper.BabelHelper.DecryptIntegers32InMethod(asm);
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("[!] " + DeobedIntegers + " Integers32 has been decrypte!");
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("[!]Error : Decryption Method not foud!");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    return;
+                }
+                //INTEGERS64
+                Console.WriteLine("[!]Retrieving the integer64 decryption method ...");
+                decmeth = Core.Helper.BabelHelper.FindInteger64DecrypterMethods(asm);
+                if (decmeth != null)
+                {
+                    Console.WriteLine("[!]Decrypting Integers64 and Replacing Calls ...");
+                    DeobedIntegers = Core.Helper.BabelHelper.DecryptIntegers64InMethod(asm);
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("[!] " + DeobedIntegers + " Integers64 has been decrypte!");
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("[!]Error : Decryption Method not foud!");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    return;
+                }
+                //FLOAT32
+                Console.WriteLine("[!]Retrieving the Float32 decryption method ...");
+                decmeth = Core.Helper.BabelHelper.FindFloat32DecrypterMethods(asm);
+                if (decmeth != null)
+                {
+                    Console.WriteLine("[!]Decrypting Float32 and Replacing Calls ...");
+                    DeobedIntegers = Core.Helper.BabelHelper.DecryptFloat32InMethod(asm);
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("[!] " + DeobedIntegers + " Float32 has been decrypte!");
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("[!]Error : Decryption Method not foud!");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    return;
+                }
+                //FLOAT64
+                Console.WriteLine("[!]Retrieving the Float64 decryption method ...");
+                decmeth = Core.Helper.BabelHelper.FindFloat64DecrypterMethods(asm);
+                if (decmeth != null)
+                {
+                    Console.WriteLine("[!]Decrypting Float64 and Replacing Calls ...");
+                    DeobedIntegers = Core.Helper.BabelHelper.DecryptFloat64InMethod(asm);
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("[!] " + DeobedIntegers + " Float64 has been decrypte!");
                     Console.ForegroundColor = ConsoleColor.White;
                 }
                 else
@@ -91,7 +165,7 @@ namespace BabelDeobfuscator
                     Console.WriteLine("[!]Decrypting Strings and Replacing Calls ...");
                     DeobedStringNumber = Core.Helper.BabelHelper.DecrypStrings_premium();
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("[!] " + DeobedStringNumber + " strings has been decrypte! Saving assembly ...");
+                    Console.WriteLine("[!] " + DeobedStringNumber + " strings has been decrypte!");
                     Console.ForegroundColor = ConsoleColor.White;
                 }
 
@@ -108,6 +182,9 @@ namespace BabelDeobfuscator
             var opts = new ModuleWriterOptions(asm);
             opts.Logger = DummyLogger.NoThrowInstance;
             asm.Write(path, opts);
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("[!]Assembly saved ! !");
+            Console.ForegroundColor = ConsoleColor.White;
             Console.ReadKey();
 
         }

@@ -15,6 +15,14 @@ namespace BabelDeobfuscator.Core.Helper
         public static TypeDef DecryptionType_premium;
         public static MethodDef DecryptionMethod_free;
         public static TypeDef DecryptionType_free;
+        public static MethodDef DecryptionInt32Method_free;
+        public static TypeDef DecryptionInt32Type_free;
+        public static MethodDef DecryptionInt64Method_free;
+        public static TypeDef DecryptionInt64Type_free;
+        public static MethodDef DecryptionFloat32Method_free;
+        public static TypeDef DecryptionFloat32Type_free;
+        public static MethodDef DecryptionFloat64Method_free;
+        public static TypeDef DecryptionFloat64Type_free;
 
         /// <summary>
         /// Basically we will crawl into the assembly and check 
@@ -344,6 +352,361 @@ namespace BabelDeobfuscator.Core.Helper
             return decmeth;
         }
 
+        /// <summary>
+        /// We have to get the integer32 decryption method for applications
+        /// protected with the free version
+        /// </summary>
+        /// <param name="module"></param>
+        public static MethodDef FindInteger32DecrypterMethods(ModuleDefMD module)
+        {
+            MethodDef decmeth = null;
+
+            /*------*/
+            /* CALL */
+            /*------*/
+            /* 
+             * int num = \uE18E.\uE000(3);
+             */
+
+            /*-------------*/
+            /* Method Code */
+            /*-------------*/
+            /*
+	            public static int \uE000(int \uE000)
+                {
+	                return \uE18E.\uE190.\uE001.\uE002[\uE000];
+                }
+             */
+            foreach (var type in module.Types)
+            {
+                foreach (var method in type.Methods)
+                {
+                    if (method.HasBody == false)
+                        continue;
+                    if (method.Body.HasInstructions)
+                    {
+                        var param = method.Parameters.Count;
+                        /*
+                         	.method public hidebysig static 
+	                            int32 '' (
+		                            int32 ''
+	                            ) cil managed 
+                            {
+                         */
+
+                        if (param != 1)
+                            continue;
+                        var returnedparam = method.ReturnType;
+                        //System.String
+                        if (returnedparam.ToString() != "System.Int32")
+                            continue;
+                        if (method.IsHideBySig && method.IsStatic)
+                        {
+                            var instrs = method.Body.Instructions;
+                            //Should be between 4 and 7
+                            if (instrs.Count == 5)
+                            {
+                                for (int i = 0; i < instrs.Count; i++)
+                                {
+                                    /*
+                                    IL_0000: ldsfld    class '.'/'' '.'/''::''
+                                    IL_0005: ldfld int32[] '.'/''::''
+                                    IL_000A: ldarg.0
+                                    IL_000B: ldelem.i4
+                                    IL_000C: ret
+                                    */
+
+                                    if (instrs[i].Operand != null)
+                                    {
+                                        if (instrs[0].OpCode == OpCodes.Ldsfld)
+                                        {
+                                            if (instrs[1].OpCode == OpCodes.Ldfld)
+                                            {
+                                                DecryptionInt32Method_free = method;
+                                                decmeth = DecryptionInt32Method_free;
+                                                DecryptionInt32Type_free = type;
+                                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                                Console.WriteLine(" [!] Integer32 decryption method" + DecryptionInt32Method_free.FullName + "(RVA:" + DecryptionMethod_free.RVA + ")");
+                                                Console.ForegroundColor = ConsoleColor.White;
+                                                return decmeth;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return decmeth;
+        }
+
+        /// <summary>
+        /// We have to get the integer64 decryption method for applications
+        /// protected with the free version
+        /// </summary>
+        /// <param name="module"></param>
+        public static MethodDef FindInteger64DecrypterMethods(ModuleDefMD module)
+        {
+            MethodDef decmeth = null;
+
+            /*------*/
+            /* CALL */
+            /*------*/
+            /* 
+             * int num = \uE18E.\uE000(1005);
+             */
+
+            /*-------------*/
+            /* Method Code */
+            /*-------------*/
+            /*
+	            public static int \uE000(int \uE000)
+                {
+	                return \uE18E.\uE190.\uE001.\uE002[\uE000];
+                }
+             */
+            foreach (var type in module.Types)
+            {
+                foreach (var method in type.Methods)
+                {
+                    if (method.HasBody == false)
+                        continue;
+                    if (method.Body.HasInstructions)
+                    {
+                        var param = method.Parameters.Count;
+                        /*
+                         	.method public hidebysig static 
+	                            int32 '' (
+		                            int32 ''
+	                            ) cil managed 
+                            {
+                         */
+
+                        if (param != 1)
+                            continue;
+                        var returnedparam = method.ReturnType;
+                        //System.String
+                        if (returnedparam.ToString() != "System.Int64")
+                            continue;
+                        if (method.IsHideBySig && method.IsStatic)
+                        {
+                            var instrs = method.Body.Instructions;
+                            //Should be between 4 and 7
+                            if (instrs.Count == 5)
+                            {
+                                for (int i = 0; i < instrs.Count; i++)
+                                {
+                                    /*
+                                    IL_0000: ldsfld    class '.'/'' '.'/''::''
+                                    IL_0005: ldfld int32[] '.'/''::''
+                                    IL_000A: ldarg.0
+                                    IL_000B: ldelem.i4
+                                    IL_000C: ret
+                                    */
+
+                                    if (instrs[i].Operand != null)
+                                    {
+                                        if (instrs[0].OpCode == OpCodes.Ldsfld)
+                                        {
+                                            if (instrs[1].OpCode == OpCodes.Ldfld)
+                                            {
+                                                DecryptionInt64Method_free = method;
+                                                decmeth = DecryptionInt64Method_free;
+                                                DecryptionInt64Type_free = type;
+                                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                                Console.WriteLine(" [!] Integer64 decryption method" + DecryptionInt64Method_free.FullName + "(RVA:" + DecryptionMethod_free.RVA + ")");
+                                                Console.ForegroundColor = ConsoleColor.White;
+                                                return decmeth;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return decmeth;
+        }
+
+        /// <summary>
+        /// We have to get the Float32 decryption method for applications
+        /// protected with the free version
+        /// </summary>
+        /// <param name="module"></param>
+        public static MethodDef FindFloat32DecrypterMethods(ModuleDefMD module)
+        {
+            MethodDef decmeth = null;
+
+            /*------*/
+            /* CALL */
+            /*------*/
+            /* 
+             * int num = \uE18E.\uE000(1005);
+             */
+
+            /*-------------*/
+            /* Method Code */
+            /*-------------*/
+            /*
+	            public static int \uE000(int \uE000)
+                {
+	                return \uE18E.\uE190.\uE001.\uE002[\uE000];
+                }
+             */
+            foreach (var type in module.Types)
+            {
+                foreach (var method in type.Methods)
+                {
+                    if (method.HasBody == false)
+                        continue;
+                    if (method.Body.HasInstructions)
+                    {
+                        var param = method.Parameters.Count;
+                        /*
+                         	.method public hidebysig static 
+	                            int32 '' (
+		                            int32 ''
+	                            ) cil managed 
+                            {
+                         */
+
+                        if (param != 1)
+                            continue;
+                        var returnedparam = method.ReturnType;
+                        //System.String
+                        if (returnedparam.ToString() != "System.Single")
+                            continue;
+                        if (method.IsHideBySig && method.IsStatic)
+                        {
+                            var instrs = method.Body.Instructions;
+                            //Should be between 4 and 7
+                            if (instrs.Count == 5)
+                            {
+                                for (int i = 0; i < instrs.Count; i++)
+                                {
+                                    /*
+                                    IL_0000: ldsfld    class '.'/'' '.'/''::''
+                                    IL_0005: ldfld int32[] '.'/''::''
+                                    IL_000A: ldarg.0
+                                    IL_000B: ldelem.i4
+                                    IL_000C: ret
+                                    */
+
+                                    if (instrs[i].Operand != null)
+                                    {
+                                        if (instrs[0].OpCode == OpCodes.Ldsfld)
+                                        {
+                                            if (instrs[1].OpCode == OpCodes.Ldfld)
+                                            {
+                                                DecryptionFloat32Method_free = method;
+                                                decmeth = DecryptionFloat32Method_free;
+                                                DecryptionFloat32Type_free = type;
+                                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                                Console.WriteLine(" [!] Float32 decryption method" + DecryptionFloat32Method_free.FullName + "(RVA:" + DecryptionMethod_free.RVA + ")");
+                                                Console.ForegroundColor = ConsoleColor.White;
+                                                return decmeth;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return decmeth;
+        }
+
+        /// <summary>
+        /// We have to get the Float64 decryption method for applications
+        /// protected with the free version
+        /// </summary>
+        /// <param name="module"></param>
+        public static MethodDef FindFloat64DecrypterMethods(ModuleDefMD module)
+        {
+            MethodDef decmeth = null;
+
+            /*------*/
+            /* CALL */
+            /*------*/
+            /* 
+             * int num = \uE18E.\uE000(1005);
+             */
+
+            /*-------------*/
+            /* Method Code */
+            /*-------------*/
+            /*
+	            public static int \uE000(int \uE000)
+                {
+	                return \uE18E.\uE190.\uE001.\uE002[\uE000];
+                }
+             */
+            foreach (var type in module.Types)
+            {
+                foreach (var method in type.Methods)
+                {
+                    if (method.HasBody == false)
+                        continue;
+                    if (method.Body.HasInstructions)
+                    {
+                        var param = method.Parameters.Count;
+                        /*
+                         	.method public hidebysig static 
+	                            int32 '' (
+		                            int32 ''
+	                            ) cil managed 
+                            {
+                         */
+
+                        if (param != 1)
+                            continue;
+                        var returnedparam = method.ReturnType;
+                        //System.String
+                        if (returnedparam.ToString() != "System.Double")
+                            continue;
+                        if (method.IsHideBySig && method.IsStatic)
+                        {
+                            var instrs = method.Body.Instructions;
+                            //Should be between 4 and 7
+                            if (instrs.Count == 5)
+                            {
+                                for (int i = 0; i < instrs.Count; i++)
+                                {
+                                    /*
+                                    IL_0000: ldsfld    class '.'/'' '.'/''::''
+                                    IL_0005: ldfld int32[] '.'/''::''
+                                    IL_000A: ldarg.0
+                                    IL_000B: ldelem.i4
+                                    IL_000C: ret
+                                    */
+
+                                    if (instrs[i].Operand != null)
+                                    {
+                                        if (instrs[0].OpCode == OpCodes.Ldsfld)
+                                        {
+                                            if (instrs[1].OpCode == OpCodes.Ldfld)
+                                            {
+                                                DecryptionFloat64Method_free = method;
+                                                decmeth = DecryptionFloat64Method_free;
+                                                DecryptionFloat64Type_free = type;
+                                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                                Console.WriteLine(" [!] Float64 decryption method" + DecryptionFloat64Method_free.FullName + "(RVA:" + DecryptionMethod_free.RVA + ")");
+                                                Console.ForegroundColor = ConsoleColor.White;
+                                                return decmeth;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return decmeth;
+        }
 
         /// <summary>
         /// the decryption method routine for free version 
@@ -374,11 +737,11 @@ namespace BabelDeobfuscator.Core.Helper
                                 string decryptedstring = null;
 
                                 Assembly assembly = Assembly.LoadFile(Program.asmpath);
-                                Type typez = assembly.GetType(DecryptionType_free.Name);
+                                var DecryptionType_free_token = DecryptionType_free.MDToken;
+                                Type typez = assembly.GetModules()[0].ResolveType(DecryptionType_free_token.ToInt32());
                                 if (typez != null)
                                 {
-                                    MethodInfo methodInfo = typez.GetMethod(DecryptionMethod_free.Name,
-                                        BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
+                                    MethodBase methodInfo = assembly.GetModules()[0].ResolveMethod(DecryptionMethod_free.MDToken.ToInt32());
                                     if (methodInfo != null)
                                     {
                                         object result = null;
@@ -410,5 +773,255 @@ namespace BabelDeobfuscator.Core.Helper
             }
             return DeobedStringNumber;
         }
+
+        /// <summary>
+        /// the decryption method routine for free version 
+        /// of Babel Obfuscator.
+        /// </summary>
+        /// <param name="module"></param>
+        /// <returns></returns>
+        public static int DecryptIntegers32InMethod(ModuleDefMD module)
+        {
+            var ConstantNum = 0;
+            var DeobedIntegersNumber = 0;
+            foreach (TypeDef type in module.Types)
+            {
+                foreach (MethodDef method in type.Methods)
+                {
+                    if (!method.HasBody)
+                        continue;
+                    for (int i = 0; i < method.Body.Instructions.Count; i++)
+                    {
+                        if (method.Body.Instructions[i].GetOffset() != 0 && method.Body.Instructions[i].OpCode == OpCodes.Call && method.Body.Instructions[i - 1].IsLdcI4())
+                        {
+                            if (method.Body.Instructions[i - 1].IsLdcI4())
+                                ConstantNum = (method.Body.Instructions[i - 1].GetLdcI4Value());
+                            if (method.Body.Instructions[i].Operand.ToString().Contains(DecryptionInt32Method_free.ToString()))
+                            {
+                                CilBody body = method.Body;
+
+                                Assembly assembly = Assembly.LoadFile(Program.asmpath);
+                                Type typez = assembly.GetModules()[0].ResolveType(DecryptionInt32Type_free.MDToken.ToInt32());
+                                if (typez != null)
+                                {
+                                    MethodBase methodInfo = assembly.GetModules()[0].ResolveMethod(DecryptionInt32Method_free.MDToken.ToInt32());
+                                    if (methodInfo != null)
+                                    {
+                                        object result = null;
+                                        ParameterInfo[] parameters = methodInfo.GetParameters();
+                                        if (parameters.Length == 0)
+                                        {
+
+                                        }
+                                        else
+                                        {
+                                            object[] parametersArray = new object[] {ConstantNum };
+                                            result = methodInfo.Invoke(methodInfo, parametersArray);
+                                            var decryptedint = result;
+                                            DeobedIntegersNumber = DeobedIntegersNumber + 1;
+                                            body.Instructions[i].OpCode = OpCodes.Ldc_I4;
+                                            body.Instructions[i].Operand = decryptedint;
+                                            body.Instructions.RemoveAt(i - 1);
+                                            Console.ForegroundColor = ConsoleColor.Gray;
+                                            Console.WriteLine("     [+]" + decryptedint + " : " + body.Instructions[i].GetOffset());
+                                            Console.ForegroundColor = ConsoleColor.White;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return DeobedIntegersNumber;
+        }
+
+        /// <summary>
+        /// the decryption method routine for free version 
+        /// of Babel Obfuscator.
+        /// </summary>
+        /// <param name="module"></param>
+        /// <returns></returns>
+        public static int DecryptIntegers64InMethod(ModuleDefMD module)
+        {
+            var ConstantNum = 0;
+            var DeobedIntegersNumber = 0;
+            foreach (TypeDef type in module.Types)
+            {
+                foreach (MethodDef method in type.Methods)
+                {
+                    if (!method.HasBody)
+                        continue;
+                    for (int i = 0; i < method.Body.Instructions.Count; i++)
+                    {
+                        if (method.Body.Instructions[i].GetOffset() != 0 && method.Body.Instructions[i].OpCode == OpCodes.Call && method.Body.Instructions[i - 1].IsLdcI4())
+                        {
+                            if (method.Body.Instructions[i - 1].IsLdcI4())
+                                ConstantNum = (method.Body.Instructions[i - 1].GetLdcI4Value());
+                            if (method.Body.Instructions[i].Operand.ToString().Contains(DecryptionInt64Method_free.ToString()))
+                            {
+                                CilBody body = method.Body;
+
+                                Assembly assembly = Assembly.LoadFile(Program.asmpath);
+                                Type typez = assembly.GetModules()[0].ResolveType(DecryptionInt64Type_free.MDToken.ToInt32());
+                                if (typez != null)
+                                {
+                                    MethodBase methodInfo = assembly.GetModules()[0].ResolveMethod(DecryptionInt64Method_free.MDToken.ToInt32());
+                                    if (methodInfo != null)
+                                    {
+                                        object result = null;
+                                        ParameterInfo[] parameters = methodInfo.GetParameters();
+                                        if (parameters.Length == 0)
+                                        {
+
+                                        }
+                                        else
+                                        {
+                                            object[] parametersArray = new object[] { ConstantNum };
+                                            result = methodInfo.Invoke(methodInfo, parametersArray);
+                                            var decryptedint = result;
+                                            DeobedIntegersNumber = DeobedIntegersNumber + 1;
+                                            body.Instructions[i].OpCode = OpCodes.Ldc_I4;
+                                            body.Instructions[i].Operand = decryptedint;
+                                            body.Instructions.RemoveAt(i - 1);
+                                            Console.ForegroundColor = ConsoleColor.Gray;
+                                            Console.WriteLine("     [+]" + decryptedint + " : " + body.Instructions[i].GetOffset());
+                                            Console.ForegroundColor = ConsoleColor.White;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return DeobedIntegersNumber;
+        }
+
+        /// <summary>
+        /// the decryption method routine for free version 
+        /// of Babel Obfuscator.
+        /// </summary>
+        /// <param name="module"></param>
+        /// <returns></returns>
+        public static int DecryptFloat32InMethod(ModuleDefMD module)
+        {
+            var ConstantNum = 0;
+            var DeobedIntegersNumber = 0;
+            foreach (TypeDef type in module.Types)
+            {
+                foreach (MethodDef method in type.Methods)
+                {
+                    if (!method.HasBody)
+                        continue;
+                    for (int i = 0; i < method.Body.Instructions.Count; i++)
+                    {
+                        if (method.Body.Instructions[i].GetOffset() != 0 && method.Body.Instructions[i].OpCode == OpCodes.Call && method.Body.Instructions[i - 1].IsLdcI4())
+                        {
+                            if (method.Body.Instructions[i - 1].IsLdcI4())
+                                ConstantNum = (method.Body.Instructions[i - 1].GetLdcI4Value());
+                            if (method.Body.Instructions[i].Operand.ToString().Contains(DecryptionFloat32Method_free.ToString()))
+                            {
+                                CilBody body = method.Body;
+
+                                Assembly assembly = Assembly.LoadFile(Program.asmpath);
+                                Type typez = assembly.GetModules()[0].ResolveType(DecryptionFloat32Type_free.MDToken.ToInt32());
+                                if (typez != null)
+                                {
+                                    MethodBase methodInfo = assembly.GetModules()[0].ResolveMethod(DecryptionFloat32Method_free.MDToken.ToInt32());
+                                    if (methodInfo != null)
+                                    {
+                                        object result = null;
+                                        ParameterInfo[] parameters = methodInfo.GetParameters();
+                                        if (parameters.Length == 0)
+                                        {
+
+                                        }
+                                        else
+                                        {
+                                            object[] parametersArray = new object[] { ConstantNum };
+                                            result = methodInfo.Invoke(methodInfo, parametersArray);
+                                            var decryptedint = result;
+                                            DeobedIntegersNumber = DeobedIntegersNumber + 1;
+                                            body.Instructions[i].OpCode = OpCodes.Ldc_I4;
+                                            body.Instructions[i].Operand = decryptedint;
+                                            body.Instructions.RemoveAt(i - 1);
+                                            Console.ForegroundColor = ConsoleColor.Gray;
+                                            Console.WriteLine("     [+]" + decryptedint + " : " + body.Instructions[i].GetOffset());
+                                            Console.ForegroundColor = ConsoleColor.White;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return DeobedIntegersNumber;
+        }
+
+        /// <summary>
+        /// the decryption method routine for free version 
+        /// of Babel Obfuscator.
+        /// </summary>
+        /// <param name="module"></param>
+        /// <returns></returns>
+        public static int DecryptFloat64InMethod(ModuleDefMD module)
+        {
+            var ConstantNum = 0;
+            var DeobedIntegersNumber = 0;
+            foreach (TypeDef type in module.Types)
+            {
+                foreach (MethodDef method in type.Methods)
+                {
+                    if (!method.HasBody)
+                        continue;
+                    for (int i = 0; i < method.Body.Instructions.Count; i++)
+                    {
+                        if (method.Body.Instructions[i].GetOffset() != 0 && method.Body.Instructions[i].OpCode == OpCodes.Call && method.Body.Instructions[i - 1].IsLdcI4())
+                        {
+
+                            if (method.Body.Instructions[i].Operand.ToString().Contains(DecryptionFloat64Method_free.ToString()))
+                            {
+                                if (method.Body.Instructions[i - 1].IsLdcI4())
+                                    ConstantNum = (method.Body.Instructions[i - 1].GetLdcI4Value());
+                                CilBody body = method.Body;
+
+                                Assembly assembly = Assembly.LoadFile(Program.asmpath);
+                                Type typez = assembly.GetModules()[0].ResolveType(DecryptionFloat64Type_free.MDToken.ToInt32());
+                                if (typez != null)
+                                {
+                                    MethodBase methodInfo = assembly.GetModules()[0].ResolveMethod(DecryptionFloat64Method_free.MDToken.ToInt32());
+                                    if (methodInfo != null)
+                                    {
+                                        object result = null;
+                                        ParameterInfo[] parameters = methodInfo.GetParameters();
+                                        if (parameters.Length == 0)
+                                        {
+
+                                        }
+                                        else
+                                        {
+                                            object[] parametersArray = new object[] { ConstantNum };
+                                            result = methodInfo.Invoke(methodInfo, parametersArray);
+                                            var decryptedint = result;
+                                            DeobedIntegersNumber = DeobedIntegersNumber + 1;
+                                            body.Instructions[i].OpCode = OpCodes.Ldc_I4;
+                                            body.Instructions[i].Operand = decryptedint;
+                                            body.Instructions.RemoveAt(i - 1);
+                                            Console.ForegroundColor = ConsoleColor.Gray;
+                                            Console.WriteLine("     [+]" + decryptedint + " : " + body.Instructions[i].GetOffset());
+                                            Console.ForegroundColor = ConsoleColor.White;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return DeobedIntegersNumber;
+        }
+
     }
 }
