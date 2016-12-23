@@ -1,4 +1,4 @@
-﻿using dnlib.DotNet;
+using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using System;
 using System.Reflection;
@@ -316,7 +316,7 @@ namespace BabelDeobfuscator.Core.Helper
                         {
                             var instrs = method.Body.Instructions;
                             //Should be between 4 and 7
-                            if (instrs.Count > 5)
+                            if (instrs.Count > 3)
                             {
                                 for (int i = 0; i < instrs.Count; i++)
                                 {
@@ -331,13 +331,13 @@ namespace BabelDeobfuscator.Core.Helper
 
                                     if (instrs[i].Operand != null)
                                     {
-                                        if (instrs[i].Operand.ToString().ToLower().Contains("intern"))
+                                        if (instrs[i].Operand.ToString().ToLower().Contains("system.string,system.int32"))
                                         {
                                             DecryptionMethod_free = method;
                                             decmeth = DecryptionMethod_free;
                                             DecryptionType_free = type;
                                             Console.ForegroundColor = ConsoleColor.Yellow;
-                                            Console.WriteLine("[!] Assemly may have been protected with a premium version");
+                                           
                                             Console.WriteLine("     " + DecryptionMethod_free.FullName + "(RVA:" + DecryptionMethod_free.RVA + ")");
                                             Console.ForegroundColor = ConsoleColor.White;
                                             return decmeth;
@@ -821,7 +821,7 @@ namespace BabelDeobfuscator.Core.Helper
                                             DeobedIntegersNumber = DeobedIntegersNumber + 1;
                                             body.Instructions[i].OpCode = OpCodes.Ldc_I4;
                                             body.Instructions[i].Operand = decryptedint;
-                                            body.Instructions.RemoveAt(i - 1);
+                                            body.Instructions[i-1].OpCode = OpCodes.Nop;
                                             Console.ForegroundColor = ConsoleColor.Gray;
                                             Console.WriteLine("     [+]" + decryptedint + " : " + body.Instructions[i].GetOffset());
                                             Console.ForegroundColor = ConsoleColor.White;
@@ -931,7 +931,7 @@ namespace BabelDeobfuscator.Core.Helper
                                     MethodBase methodInfo = assembly.GetModules()[0].ResolveMethod(DecryptionFloat32Method_free.MDToken.ToInt32());
                                     if (methodInfo != null)
                                     {
-                                        object result = null;
+                                        Single result = 0;
                                         ParameterInfo[] parameters = methodInfo.GetParameters();
                                         if (parameters.Length == 0)
                                         {
@@ -940,15 +940,20 @@ namespace BabelDeobfuscator.Core.Helper
                                         else
                                         {
                                             object[] parametersArray = new object[] { ConstantNum };
-                                            result = methodInfo.Invoke(methodInfo, parametersArray);
-                                            var decryptedint = result;
-                                            DeobedIntegersNumber = DeobedIntegersNumber + 1;
-                                            body.Instructions[i].OpCode = OpCodes.Ldc_I4;
-                                            body.Instructions[i].Operand = decryptedint;
-                                            body.Instructions.RemoveAt(i - 1);
-                                            Console.ForegroundColor = ConsoleColor.Gray;
-                                            Console.WriteLine("     [+]" + decryptedint + " : " + body.Instructions[i].GetOffset());
-                                            Console.ForegroundColor = ConsoleColor.White;
+                                            result =(Single) methodInfo.Invoke(methodInfo, parametersArray);
+                                            Single decryptedint = result;
+                                           
+                                                DeobedIntegersNumber = DeobedIntegersNumber + 1;
+                                                body.Instructions[i].OpCode = OpCodes.Ldc_R4;
+
+                                                body.Instructions[i].Operand = decryptedint;
+                                                body.Instructions.RemoveAt(i - 1);
+                                                Console.ForegroundColor = ConsoleColor.Gray;
+                                                Console.WriteLine("     [+]" + decryptedint + " : " + body.Instructions[i].GetOffset());
+                                                Console.ForegroundColor = ConsoleColor.White;
+                                          
+
+                                            
                                         }
                                     }
                                 }
