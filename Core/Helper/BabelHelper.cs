@@ -316,7 +316,7 @@ namespace BabelDeobfuscator.Core.Helper
                         {
                             var instrs = method.Body.Instructions;
                             //Should be between 4 and 7
-                            if (instrs.Count > 5)
+                            if (instrs.Count > 3)
                             {
                                 for (int i = 0; i < instrs.Count; i++)
                                 {
@@ -331,13 +331,13 @@ namespace BabelDeobfuscator.Core.Helper
 
                                     if (instrs[i].Operand != null)
                                     {
-                                        if (instrs[i].Operand.ToString().ToLower().Contains("intern"))
+                                        if (instrs[i].Operand.ToString().ToLower().Contains("system.string,system.int32"))
                                         {
                                             DecryptionMethod_free = method;
                                             decmeth = DecryptionMethod_free;
                                             DecryptionType_free = type;
                                             Console.ForegroundColor = ConsoleColor.Yellow;
-                                            Console.WriteLine("[!] Assemly may have been protected with a premium version");
+                                           
                                             Console.WriteLine("     " + DecryptionMethod_free.FullName + "(RVA:" + DecryptionMethod_free.RVA + ")");
                                             Console.ForegroundColor = ConsoleColor.White;
                                             return decmeth;
