@@ -161,11 +161,11 @@ namespace BabelDeobfuscator
                 }
                 else
                 {
-                    Console.WriteLine("[!]Decrypption method is called " + number_of_calls + " times.");
+                    Console.WriteLine("[!]Decryption method is called " + number_of_calls + " times.");
                     Console.WriteLine("[!]Decrypting Strings and Replacing Calls ...");
                     DeobedStringNumber = Core.Helper.BabelHelper.DecrypStrings_premium();
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("[!] " + DeobedStringNumber + " strings has been decrypte!");
+                    Console.WriteLine("[!] " + DeobedStringNumber + " strings have been decrypted!");
                     Console.ForegroundColor = ConsoleColor.White;
                 }
 
