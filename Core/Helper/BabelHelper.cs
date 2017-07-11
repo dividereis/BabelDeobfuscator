@@ -137,9 +137,21 @@ namespace BabelDeobfuscator.Core.Helper
         public static int DecrypStrings_premium()
         {
             int decryptedstr = 0;
-            var asm = assem;
-            var dec_meth = DecryptionMethod_premium;
-            foreach (TypeDef type in asm.Types)
+            Assembly assembly = Assembly.LoadFrom(_path);
+
+            object[] parametersZ;
+            if (_asm.EntryPoint.Parameters.Count == 0)
+            {
+                parametersZ = new object[] { };
+            }
+            else
+            {
+                parametersZ = new object[] { new string[] { } };
+            }
+            assembly.EntryPoint.Invoke(null, parametersZ);
+            Type typez = assembly.GetType(DecryptionType.Name);
+
+            foreach (TypeDef type in _asm.Types)
             {
                 foreach (MethodDef meth in type.Methods)
                 {
@@ -149,43 +161,25 @@ namespace BabelDeobfuscator.Core.Helper
                     for (int i = 0; i < instrs.Count; i++)
                     {
                         if (meth.Body.Instructions[i].OpCode != OpCodes.Call) continue;
-                        var CalledDecMethod = meth.Body.Instructions[i].Operand;
-                        if (meth.Body.Instructions[i].Operand.ToString().Contains(dec_meth.FullName))
+                        if (meth.Body.Instructions[i].Operand.ToString().Contains(DecryptionMethod.FullName))
                         {
                             if (meth.Body.Instructions[i - 1].IsLdcI4())
                             {
                                 var decryptionkey = meth.Body.Instructions[i - 1].GetLdcI4Value();
 
-
-                                /*======================================================================*/
-
-                                Assembly assembly = Assembly.LoadFile(Program.asmpath);
-
-                                if (asm.EntryPoint != null)
+                                if (_asm.EntryPoint != null)
                                 {
-                                    object[] parametersZ;
-                                    if (asm.EntryPoint.Parameters.Count == 0)
-                                    {
-                                        parametersZ = new object[] { };
-                                    }
-                                    else
-                                    {
-                                        parametersZ = new object[] { new string[] { } };
-                                    }
                                     try
                                     {
                                         string res = "Error invoking entrypoint";
                                         try
                                         {
-                                            assembly.EntryPoint.Invoke(null, parametersZ);
-                                            Type typez = assembly.GetType(DecryptionType_premium.Name);
                                             if (typez != null)
                                             {
-                                                MethodInfo methodInfo = typez.GetMethod(DecryptionMethod_premium.Name,
+                                                MethodInfo methodInfo = typez.GetMethod(DecryptionMethod.Name,
                                                     BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
                                                 if (methodInfo != null)
                                                 {
-                                                    object result = null;
                                                     ParameterInfo[] parameters = methodInfo.GetParameters();
                                                     if (parameters.Length == 0)
                                                     {
@@ -193,15 +187,15 @@ namespace BabelDeobfuscator.Core.Helper
                                                     }
                                                     else
                                                     {
-                                                        object[] parametersArray = new object[] { decryptionkey };
+                                                        object[] parametersArray = { decryptionkey };
                                                         try
                                                         {
-                                                            result = methodInfo.Invoke(/*methodInfo,*/null, parametersArray);
+                                                            var result = methodInfo.Invoke(/*methodInfo,*/null, parametersArray);
                                                             var decryptedstring = result.ToString();
                                                             decryptedstr += 1;
                                                             body.Instructions[i].OpCode = OpCodes.Ldstr;
                                                             body.Instructions[i].Operand = decryptedstring;
-                                                            body.Instructions.RemoveAt(i - 1);
+                                                            body.Instructions[i - 1].OpCode = OpCodes.Nop;
                                                             Console.ForegroundColor = ConsoleColor.Gray;
                                                             Console.WriteLine("     [+]" + decryptedstring + body.Instructions[i].GetOffset());
                                                             Console.ForegroundColor = ConsoleColor.White;
@@ -219,15 +213,11 @@ namespace BabelDeobfuscator.Core.Helper
                                         {
                                             res = ex.Message;
                                         }
-                                        Thread.Sleep(900);
                                     }
                                     catch
                                     {
                                         return decryptedstr;
                                     }
-                                    /*======================================================================*/
-
-                                    /*======================================================================*/
                                 }
                                 else
                                 {
@@ -240,6 +230,7 @@ namespace BabelDeobfuscator.Core.Helper
             }
             return decryptedstr;
         }
+
 
 
         /// <summary>
@@ -897,9 +888,9 @@ namespace BabelDeobfuscator.Core.Helper
                                             result = methodInfo.Invoke(methodInfo, parametersArray);
                                             var decryptedint = result;
                                             DeobedIntegersNumber = DeobedIntegersNumber + 1;
-                                            body.Instructions[i].OpCode = OpCodes.Ldc_I4;
+                                            body.Instructions[i].OpCode = OpCodes.Ldc_I8;
                                             body.Instructions[i].Operand = decryptedint;
-                                            body.Instructions.RemoveAt(i - 1);
+                                            body.Instructions[i - 1].OpCode = OpCodes.Nop;
                                             Console.ForegroundColor = ConsoleColor.Gray;
                                             Console.WriteLine("     [+]" + decryptedint + " : " + body.Instructions[i].GetOffset());
                                             Console.ForegroundColor = ConsoleColor.White;
@@ -963,7 +954,7 @@ namespace BabelDeobfuscator.Core.Helper
                                                 body.Instructions[i].OpCode = OpCodes.Ldc_R4;
 
                                                 body.Instructions[i].Operand = decryptedint;
-                                                body.Instructions.RemoveAt(i - 1);
+                                                body.Instructions[i - 1].OpCode = OpCodes.Nop;
                                                 Console.ForegroundColor = ConsoleColor.Gray;
                                                 Console.WriteLine("     [+]" + decryptedint + " : " + body.Instructions[i].GetOffset());
                                                 Console.ForegroundColor = ConsoleColor.White;
@@ -1027,9 +1018,9 @@ namespace BabelDeobfuscator.Core.Helper
                                             result = methodInfo.Invoke(methodInfo, parametersArray);
                                             var decryptedint = result;
                                             DeobedIntegersNumber = DeobedIntegersNumber + 1;
-                                            body.Instructions[i].OpCode = OpCodes.Ldc_I4;
+                                            body.Instructions[i].OpCode = OpCodes.Ldc_I8;
                                             body.Instructions[i].Operand = decryptedint;
-                                            body.Instructions.RemoveAt(i - 1);
+                                            body.Instructions[i - 1].OpCode = OpCodes.Nop;
                                             Console.ForegroundColor = ConsoleColor.Gray;
                                             Console.WriteLine("     [+]" + decryptedint + " : " + body.Instructions[i].GetOffset());
                                             Console.ForegroundColor = ConsoleColor.White;
