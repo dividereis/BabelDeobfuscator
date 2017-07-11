@@ -68,6 +68,22 @@ namespace BabelDeobfuscator.Core.Helper
                             }
                         }
                     }
+			
+		    var Instructions = meth.Body.Instructions;
+
+                    foreach (Instruction instruction in Instructions)
+                    {
+                        if (instruction.OpCode == OpCodes.Castclass && instruction.Operand.ToString() == "System.Collections.Hashtable")
+                        {
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            Console.WriteLine("[!] Assemly may have been protected with a premium version");
+                            Console.WriteLine("     " + meth.FullName + "(RVA:" + meth.RVA + ")");
+                            DecryptionMethod_premium = meth;
+                            DecryptionType_premium = type;
+                            Console.ForegroundColor = ConsoleColor.White;
+                            return false;
+                        }
+                    }
                 }
             }
             Console.ForegroundColor = ConsoleColor.Yellow;
